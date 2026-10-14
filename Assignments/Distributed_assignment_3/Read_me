@@ -3,4 +3,7 @@
 1. To generate result      
         run make  ( intside the root directory)
         then run  ./run_studies.sh
-2. to run visualizations  run  plot_results.py
+2. to view visualizations 
+    2.1 run  plot_results.py from with in visualizations folder
+    2.2 to view plots go inside visualizations/viz  
+    

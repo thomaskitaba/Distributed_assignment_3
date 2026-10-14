@@ -1,8 +1,8 @@
 #!/bin/bash
+
 # Performance studies for the assignment. Adapts to the number of physical cores.
 #
-#   ./run_studies.sh                    # QUICK mode (T=10, 1 run each) - start here
-#   FULL=1 ./run_studies.sh             # final numbers (T=100, best of 3) - slow, run once at the end
+#   ./run_studies.sh                    # normal use
 #   MAXP=4 ./run_studies.sh             # force the max process count
 #   MPIFLAGS="--use-hwthread-cpus" ./run_studies.sh   # count hardware threads as slots
 #   REPS=1 N0=256 T=10 ./run_studies.sh # quick smoke test
@@ -10,10 +10,8 @@
 # Output: results.csv  (study,N,P,px,py,threads,no_comm,gflops)   errors.log (failed runs)
 
 N0=${N0:-1024}
-# Gflops is a rate, so a shorter simulated time T gives the same Gflops, only faster.
-#   default (quick):  T=10,  1 run per configuration   -> for checking everything works / drafting
-#   FULL=1:           T=100, best of 3 runs            -> the settings the assignment asks for
-if [ "${FULL:-0}" = 1 ]; then T=${T:-100}; REPS=${REPS:-3}; else T=${T:-10}; REPS=${REPS:-1}; fi
+T=${T:-100}
+REPS=${REPS:-3}                        # each configuration is run REPS times, best Gflops kept
 PHYS=$(lscpu -p=CORE,SOCKET 2>/dev/null | grep -v '^#' | sort -u | wc -l)
 [ "${PHYS:-0}" -ge 1 ] || PHYS=$(nproc)
 MAXP=${MAXP:-$PHYS}
@@ -96,12 +94,13 @@ while [ "$th" -le "$MAXP" ]; do
   th=$((th * 2))
 done
 
-echo "done in ${SECONDS}s -> $OUT   (failed runs, if any, are listed in errors.log)"
+echo "done -> $OUT   (failed runs, if any, are listed in errors.log)"
 
-# #!/bin/bash
+
 # # Performance studies for the assignment. Adapts to the number of physical cores.
 # #
-# #   ./run_studies.sh                    # normal use
+# #   ./run_studies.sh                    # QUICK mode (T=10, 1 run each) - start here
+# #   FULL=1 ./run_studies.sh             # final numbers (T=100, best of 3) - slow, run once at the end
 # #   MAXP=4 ./run_studies.sh             # force the max process count
 # #   MPIFLAGS="--use-hwthread-cpus" ./run_studies.sh   # count hardware threads as slots
 # #   REPS=1 N0=256 T=10 ./run_studies.sh # quick smoke test
@@ -109,8 +108,10 @@ echo "done in ${SECONDS}s -> $OUT   (failed runs, if any, are listed in errors.l
 # # Output: results.csv  (study,N,P,px,py,threads,no_comm,gflops)   errors.log (failed runs)
 
 # N0=${N0:-1024}
-# T=${T:-100}
-# REPS=${REPS:-3}                        # each configuration is run REPS times, best Gflops kept
+# # Gflops is a rate, so a shorter simulated time T gives the same Gflops, only faster.
+# #   default (quick):  T=10,  1 run per configuration   -> for checking everything works / drafting
+# #   FULL=1:           T=100, best of 3 runs            -> the settings the assignment asks for
+# if [ "${FULL:-0}" = 1 ]; then T=${T:-100}; REPS=${REPS:-3}; else T=${T:-10}; REPS=${REPS:-1}; fi
 # PHYS=$(lscpu -p=CORE,SOCKET 2>/dev/null | grep -v '^#' | sort -u | wc -l)
 # [ "${PHYS:-0}" -ge 1 ] || PHYS=$(nproc)
 # MAXP=${MAXP:-$PHYS}
@@ -193,4 +194,6 @@ echo "done in ${SECONDS}s -> $OUT   (failed runs, if any, are listed in errors.l
 #   th=$((th * 2))
 # done
 
-# echo "done -> $OUT   (failed runs, if any, are listed in errors.log)"
+# echo "done in ${SECONDS}s -> $OUT   (failed runs, if any, are listed in errors.log)"
+
+# #!/bin/bash
