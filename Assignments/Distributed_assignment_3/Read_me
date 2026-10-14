@@ -1,0 +1,6 @@
+
+
+1. To generate result      
+        run make  ( intside the root directory)
+        then run  ./run_studies.sh
+2. to run visualizations  run  plot_results.py
